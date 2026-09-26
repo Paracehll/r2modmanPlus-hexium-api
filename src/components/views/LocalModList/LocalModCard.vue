@@ -163,6 +163,10 @@ function openReviewModal() {
 
         <template v-slot:title>
             <span class="non-selectable">
+                <span v-if="mod.getPackageSource() === 'hexium'"
+                    class="tag is-primary margin-right margin-right--half-width">
+                    Hexium
+                </span>
                 <span v-if="isDeprecated"
                     class="tag is-danger margin-right margin-right--half-width"
                     v-tooltip.right="t('translations.pages.manager.online.modList.tooltips.deprecated.long')">
@@ -256,7 +260,7 @@ function openReviewModal() {
         </button>
 
         <ExternalLink :url="mod.getWebsiteUrl()" class="button">
-            {{ t('translations.pages.manager.installed.localModCard.actions.openWebsite') }}
+            {{ mod.getPackageSource() === 'hexium' ? 'Open Hexium Page' : t('translations.pages.manager.installed.localModCard.actions.openWebsite') }}
             <i class="fas fa-external-link-alt margin-left margin-left--half-width"></i>
         </ExternalLink>
 

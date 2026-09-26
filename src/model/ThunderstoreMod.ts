@@ -12,6 +12,9 @@ export default class ThunderstoreMod extends ThunderstoreVersion {
     private hasNsfwContent: boolean = false;
     private donationLink: string | null = null;
     private latestVersion: string = '';
+    private packageSource: 'thunderstore' | 'hexium' = 'thunderstore';
+    private hasHexiumUpdate: boolean = false;
+    private hexiumLatestVersion?: string;
 
     // Imitate the order where mods are returned from Thunderstore package listing API.
     public static defaultOrderComparer(a: ThunderstoreMod, b: ThunderstoreMod): number {
@@ -52,6 +55,10 @@ export default class ThunderstoreMod extends ThunderstoreVersion {
         mod.setLatestVersion(data.versions[0].version_number);
         mod.setDescription(data.versions[0].description);
         mod.setIcon(data.versions[0].icon);
+        mod.setPackageSource(data.package_source || 'thunderstore');
+        if (data.has_hexium_update) {
+            mod.setHasHexiumUpdate(data.has_hexium_update, data.hexium_latest_version);
+        }
         return mod;
     }
 
@@ -75,6 +82,10 @@ export default class ThunderstoreMod extends ThunderstoreVersion {
         mod.setLatestVersion(data.latest_version_number);
         mod.setDescription(data.latest_description);
         mod.setIcon(data.latest_icon);
+        mod.setPackageSource(data.package_source || 'thunderstore');
+        if (data.has_hexium_update) {
+            mod.setHasHexiumUpdate(data.has_hexium_update, data.hexium_latest_version);
+        }
         return mod;
     }
 
@@ -168,5 +179,32 @@ export default class ThunderstoreMod extends ThunderstoreVersion {
 
     public setDonationLink(url: string | null | undefined) {
         this.donationLink = url || null;
+    }
+
+    public getPackageSource(): 'thunderstore' | 'hexium' {
+        return this.packageSource;
+    }
+
+    public setPackageSource(source: 'thunderstore' | 'hexium') {
+        this.packageSource = source;
+    }
+
+    public isHexiumSource(): boolean {
+        return this.packageSource === 'hexium';
+    }
+
+    public getHasHexiumUpdate(): boolean {
+        return this.hasHexiumUpdate;
+    }
+
+    public setHasHexiumUpdate(hasUpdate: boolean, hexiumVersion?: string) {
+        this.hasHexiumUpdate = hasUpdate;
+        if (hexiumVersion) {
+            this.hexiumLatestVersion = hexiumVersion;
+        }
+    }
+
+    public getHexiumLatestVersion(): string | undefined {
+        return this.hexiumLatestVersion;
     }
 }

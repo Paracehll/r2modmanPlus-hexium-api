@@ -79,6 +79,9 @@ export default class ProfileModList {
                     if (key === 'icon') {
                         return undefined;
                     }
+                    if (key === 'packageSource' && (value === 'thunderstore' || !value)) {
+                        return undefined;
+                    }
                     return value;
                 }
             });

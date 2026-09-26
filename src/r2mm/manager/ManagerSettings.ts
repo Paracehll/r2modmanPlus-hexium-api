@@ -241,4 +241,5 @@ export default class ManagerSettings {
         ManagerSettings.CONTEXT.global.locale = locale;
         await this.save();
     }
+
 }

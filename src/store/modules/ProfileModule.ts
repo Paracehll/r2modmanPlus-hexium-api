@@ -127,8 +127,10 @@ export default {
         // Swap the ManifestV2s to ThunderstoreMods as the latter knows the version number
         // of the latest version, which we need when showing how mods will be updated.
         modsWithUpdates(state, _getters, _rootState, rootGetters): ThunderstoreMod[] {
-            return state.modList.map((mod): CachedMod => rootGetters['tsMods/cachedMod'](mod))
-                                .filter(cachedMod => cachedMod && !cachedMod.isLatest && cachedMod.tsMod)
+            return state.modList
+                                .filter(mod => mod.getPackageSource() !== 'hexium')
+                                .map((mod): CachedMod => rootGetters['tsMods/cachedMod'](mod))
+                                .filter(cachedMod => cachedMod && !cachedMod.isLatest && cachedMod.tsMod && cachedMod.tsMod.getPackageSource() !== 'hexium')
                                 .map(cachedMod => cachedMod.tsMod!);
         },
 

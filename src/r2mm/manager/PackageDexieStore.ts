@@ -59,6 +59,9 @@ function toSummary(community: string, pkg: any): DexieSummary {
         latest_version_number: pkg.versions[0].version_number,
         latest_description: pkg.versions[0].description,
         latest_icon: pkg.versions[0].icon,
+        package_source: pkg.package_source || 'thunderstore',
+        has_hexium_update: pkg.has_hexium_update || false,
+        hexium_latest_version: pkg.hexium_latest_version || undefined,
     };
 }
 

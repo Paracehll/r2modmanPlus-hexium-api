@@ -13,6 +13,7 @@ import { retry } from '../../utils/Common';
 import { Deprecations } from '../../utils/Deprecations';
 import { fetchAndProcessBlobFile, getAxiosWithTimeouts, isNetworkError } from '../../utils/HttpUtils';
 import { transformPackageUrl } from '../../providers/cdn/PackageUrlTransformer';
+import { HexiumSource } from '../../providers/package_source/HexiumSource';
 
 export interface CachedMod {
     tsMod: ThunderstoreMod | undefined;
@@ -416,12 +417,48 @@ export const TsModsModule = {
             }
         },
 
-        async updateMods({commit, dispatch, rootState}) {
-            const modList = await PackageDb.getPackagesAsThunderstoreMods(rootState.activeGame.internalFolderName);
+        async updateMods({commit, dispatch, state, rootState}) {
+            let modList = await PackageDb.getPackagesAsThunderstoreMods(rootState.activeGame.internalFolderName);
             commit('setMods', modList);
-            commit('updateDeprecated', modList);
+            await dispatch('fetchAndMergeHexiumPackages');
+            commit('updateDeprecated', state.mods);
             commit('clearModCache');
             await dispatch('updateModsLastUpdated');
+        },
+
+        async fetchAndMergeHexiumPackages({commit, state, rootState}) {
+            const hexiumSource = new HexiumSource();
+            const hexiumPackages = await hexiumSource.fetchIndex(rootState.activeGame.internalFolderName);
+            if (!hexiumPackages || hexiumPackages.length === 0) {
+                return;
+            }
+
+            const currentMods = [...state.mods];
+            const modMap = new Map(currentMods.map((m) => [m.getFullName(), m]));
+            const newHexiumMods: ThunderstoreMod[] = [];
+
+            for (const hexiumPkg of hexiumPackages) {
+                const existingMod = modMap.get(hexiumPkg.full_name);
+                const hexiumVersionStr = hexiumPkg.versions && hexiumPkg.versions[0] ? hexiumPkg.versions[0].version_number : hexiumPkg.latest_version_number;
+
+                if (existingMod) {
+                    if (hexiumVersionStr) {
+                        const existingVer = new VersionNumber(existingMod.getLatestVersion());
+                        const hexiumVer = new VersionNumber(hexiumVersionStr);
+                        if (hexiumVer.isNewerThan(existingVer)) {
+                            existingMod.setHasHexiumUpdate(true, hexiumVersionStr);
+                        }
+                    }
+                } else {
+                    const mod = ThunderstoreMod.parseFromThunderstoreData(hexiumPkg);
+                    mod.setPackageSource('hexium');
+                    newHexiumMods.push(mod);
+                }
+            }
+
+            if (newHexiumMods.length > 0 || currentMods.some(m => m.getHasHexiumUpdate())) {
+                commit('setMods', [...currentMods, ...newHexiumMods]);
+            }
         },
 
         async updateModsLastUpdated({commit, rootState}) {

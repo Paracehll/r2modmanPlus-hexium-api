@@ -86,8 +86,8 @@
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
     "devtron": "^1.4.0",
-    "electron": "38.8.6",
-    "electron-builder": "26.14.0",
+    "electron": "^38.8.6",
+    "electron-builder": "^26.14.0",
     "electron-debug": "^3.0.1",
     "electron-devtools-installer": "^3.0.0",
     "identity-obj-proxy": "^3.0.0",
@@ -106,7 +106,7 @@
     "wallaby-vue-compiler": "^1.0.3"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0",
+    "node": ">= 20.19.0",
     "npm": ">= 10.0.0"
   },
   "packageManager": "pnpm@11.8.0"

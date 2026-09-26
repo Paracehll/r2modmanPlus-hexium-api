@@ -6,6 +6,15 @@
             :id="`online-card-${index}`"
             :description="key.getDescription()">
             <template v-slot:title>
+                <span v-if="key.isHexiumSource()"
+                      class="tag is-primary margin-right margin-right--half-width">
+                    Hexium
+                </span>
+                <span v-if="key.getHasHexiumUpdate()"
+                      class="tag is-warning margin-right margin-right--half-width"
+                      v-tooltip.right="`Newer version available on Hexium (${key.getHexiumLatestVersion()})`">
+                    Hexium Update
+                </span>
                 <span v-if="key.isPinned()">
                     <span class="tag is-info margin-right margin-right--half-width"
                           v-tooltip.right="t('translations.pages.manager.online.modList.tooltips.pinned.long')">
@@ -52,7 +61,7 @@
                 {{ t('translations.pages.manager.online.modList.actions.download') }}
             </button>
             <ExternalLink :url="key.getPackageUrl()" class='button'>
-                {{ t('translations.pages.manager.online.modList.actions.website') }}
+                {{ key.isHexiumSource() ? 'Open Hexium Page' : t('translations.pages.manager.online.modList.actions.website') }}
                 <i class="fas fa-external-link-alt margin-left margin-left--half-width"></i>
             </ExternalLink>
             <template v-if="!readOnly">

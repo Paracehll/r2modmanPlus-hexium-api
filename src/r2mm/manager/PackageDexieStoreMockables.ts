@@ -39,6 +39,9 @@ export interface DexiePackage {
 
     // Extra fields not included in the API response
     community: string;
+    package_source?: 'thunderstore' | 'hexium';
+    has_hexium_update?: boolean;
+    hexium_latest_version?: string;
 }
 
 // Flat per-package row carrying only the fields the mod list path reads, so
@@ -61,6 +64,9 @@ export interface DexieSummary {
     latest_version_number: string;
     latest_description: string;
     latest_icon: string;
+    package_source?: 'thunderstore' | 'hexium';
+    has_hexium_update?: boolean;
+    hexium_latest_version?: string;
 }
 
 export async function fetchPackagesByCommunityPackagePairs(

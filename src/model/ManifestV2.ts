@@ -33,6 +33,7 @@ export default class ManifestV2 {
 
     private onlineSource: boolean = false;
     private trustedPackage: boolean = false;
+    private packageSource: 'thunderstore' | 'hexium' = 'thunderstore';
 
     // Intended to be used to import a mod with only minimal fields specified.
     // Should support manifest V1. Defaults to an "Unknown" author field if not found.
@@ -67,6 +68,7 @@ export default class ManifestV2 {
         this.setWebsiteUrl(combo.getMod().getPackageUrl());
         this.setGameVersion('0');
         this.icon = path.join(PathResolver.MOD_ROOT, 'cache', this.getName(), this.versionNumber.toString(), 'icon.png');
+        this.setPackageSource(combo.getMod().getPackageSource());
         return this;
     }
 
@@ -92,6 +94,7 @@ export default class ManifestV2 {
         this.setInstalledAtTime(jsManifestObject.installedAtTime || 0);
         this.setOnlineSource(jsManifestObject.onlineSource || false);
         this.setTrustedPackage(jsManifestObject.trustedPackage || false);
+        this.setPackageSource(jsManifestObject.packageSource || 'thunderstore');
         if (!jsManifestObject.enabled) {
             this.disable();
         }
@@ -265,5 +268,13 @@ export default class ManifestV2 {
 
     public setTrustedPackage(trusted: boolean) {
         this.trustedPackage = trusted;
+    }
+
+    public getPackageSource(): 'thunderstore' | 'hexium' {
+        return this.packageSource;
+    }
+
+    public setPackageSource(source: 'thunderstore' | 'hexium') {
+        this.packageSource = source;
     }
 }

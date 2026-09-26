@@ -60,7 +60,14 @@
                                 <router-link :to="{name: 'downloads'}" class="margin-right--half-width">
                                     <i class="tag fas fa-download is-primary" />
                                 </router-link>
-                                <span :class="getTagLinkClasses(['manager.online', 'downloads'])">{{filteredModCount}}</span>
+                                <span :class="getTagLinkClasses(['manager.online', 'downloads'])">{{filteredThunderstoreModCount}}</span>
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link :to="{name: 'manager.hexium'}" class="tagged-link">
+                                <i class="fas fa-cube tagged-link__icon icon--margin-right" />
+                                <span class="tagged-link__content">{{ t('translations.pages.manager.navigation.modsActions.hexium') }}</span>
+                                <span :class="getTagLinkClasses(['manager.hexium'])">{{filteredHexiumModCount}}</span>
                             </router-link>
                         </li>
                     </ul>
@@ -115,7 +122,7 @@ import { useModFiltersComposable } from '../composables/ModFiltersComposable';
 
 const store = getStore<State>();
 const router = useRouter();
-const { filteredModCount } = useModFiltersComposable();
+const { filteredThunderstoreModCount, filteredHexiumModCount } = useModFiltersComposable();
 const { t } = useI18n();
 
 const selectedMode = ref<LaunchMode>(LaunchMode.MODDED);

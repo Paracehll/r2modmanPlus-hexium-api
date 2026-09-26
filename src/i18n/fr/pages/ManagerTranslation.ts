@@ -9,7 +9,8 @@ export const ManagerTranslation: ManagerMessageFormat = {
         modsActions: {
             label: 'Mods',
             installed: 'Installés',
-            online: 'En ligne'
+            online: 'En ligne',
+            hexium: 'Hexium'
         },
         otherActions: {
             label: 'Autres',

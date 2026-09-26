@@ -64,7 +64,7 @@
                 </div>
                 <div class="in-mod-list" v-else-if="getPaginationSize() === 0">
                     <p class="notification margin-right">
-                        {{ t(`translations.pages.manager.online.pagination.${store.state.tsMods.mods.length ? 'noFoundMods' : 'noMods'}`) }}
+                        {{ t(`translations.pages.manager.online.pagination.${totalSourceModsCount ? 'noFoundMods' : 'noMods'}`) }}
                     </p>
                 </div>
             </div>
@@ -100,8 +100,16 @@ import { useModFiltersComposable } from '../composables/ModFiltersComposable';
 import {useI18n} from "vue-i18n";
 
 const store = getStore<State>();
-const { filteredMods, searchFilter } = useModFiltersComposable();
+const { filteredMods, filteredThunderstoreMods, filteredHexiumMods, searchFilter } = useModFiltersComposable();
 const { t } = useI18n();
+
+type OnlineModViewProps = {
+    packageSource?: 'thunderstore' | 'hexium' | 'all';
+};
+
+const props = withDefaults(defineProps<OnlineModViewProps>(), {
+    packageSource: 'thunderstore'
+});
 
 const PAGE_SIZE = 40;
 
@@ -113,12 +121,32 @@ const OnlineModList = defineAsyncComponent(() => OnlineModListProvider.provider(
 
 const localModList = computed<ManifestV2[]>(() => store.state.profile.modList);
 
+const displayMods = computed(() => {
+    if (props.packageSource === 'hexium') {
+        return filteredHexiumMods.value;
+    }
+    if (props.packageSource === 'thunderstore') {
+        return filteredThunderstoreMods.value;
+    }
+    return filteredMods.value;
+});
+
+const totalSourceModsCount = computed(() => {
+    if (props.packageSource === 'hexium') {
+        return store.state.tsMods.mods.filter(m => m.isHexiumSource()).length;
+    }
+    if (props.packageSource === 'thunderstore') {
+        return store.state.tsMods.mods.filter(m => !m.isHexiumSource()).length;
+    }
+    return store.state.tsMods.mods.length;
+});
+
 function getPaginationSize() {
-    return Math.ceil(filteredMods.value.length / PAGE_SIZE);
+    return Math.ceil(displayMods.value.length / PAGE_SIZE);
 }
 
 function changePage() {
-    pagedThunderstoreModList.value = filteredMods.value.slice(
+    pagedThunderstoreModList.value = displayMods.value.slice(
         (pageNumber.value - 1) * PAGE_SIZE,
         pageNumber.value * PAGE_SIZE
     );
@@ -130,7 +158,7 @@ watch(searchFilter, () => {
     pageNumber.value = 1;
 });
 
-watch(filteredMods, changePage);
+watch(displayMods, changePage);
 
 onMounted(changePage);
 

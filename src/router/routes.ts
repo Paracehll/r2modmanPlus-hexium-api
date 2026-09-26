@@ -86,6 +86,14 @@ const routes: RouteRecordRaw[] = [
                         meta: {title: () => profileTitle()}
                     },
                     {
+                        name: 'manager.hexium',
+                        path: 'hexium/',
+                        components: {
+                            subview: () => import('components/views/HexiumModView.vue')
+                        },
+                        meta: {title: () => profileTitle()}
+                    },
+                    {
                         name: 'manager.settings',
                         path: 'settings/',
                         components: {

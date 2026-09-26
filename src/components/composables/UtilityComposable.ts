@@ -21,7 +21,7 @@ export function useUtilityComposable() {
 
     function hookModInstallingViaProtocol(router: Router) {
         InteractionProvider.instance.hookModInstallProtocol(async (protocolUrl) => {
-            const profileSelectedRoutes = ["manager", "manager.installed", "manager.online", "manager.settings", "config-editor", "help", "downloads"];
+            const profileSelectedRoutes = ["manager", "manager.installed", "manager.online", "manager.hexium", "manager.settings", "config-editor", "help", "downloads"];
             if (router.currentRoute.value.name && !profileSelectedRoutes.includes(router.currentRoute.value.name as string)) {
                 store.commit('error/handleError', {
                     error: new R2Error(

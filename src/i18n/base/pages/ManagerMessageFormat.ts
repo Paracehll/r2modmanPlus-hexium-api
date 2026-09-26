@@ -8,6 +8,7 @@ export type ManagerMessageFormat = {
             label: string;
             installed: string;
             online: string;
+            hexium: string;
         },
         otherActions: {
             label: string;

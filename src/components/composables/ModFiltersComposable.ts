@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 
 import { SortDirection } from '../../model/real_enums/sort/SortDirection';
 import SortingStyle from '../../model/enums/SortingStyle';
@@ -13,6 +13,11 @@ const searchFilter = ref('');
 const sortedMods = shallowRef<ThunderstoreMod[]>([]);
 const filteredMods = shallowRef<ThunderstoreMod[]>([]);
 const filteredModCount = ref(0);
+
+const filteredThunderstoreMods = computed(() => filteredMods.value.filter(mod => !mod.isHexiumSource()));
+const filteredHexiumMods = computed(() => filteredMods.value.filter(mod => mod.isHexiumSource()));
+const filteredThunderstoreModCount = computed(() => filteredThunderstoreMods.value.length);
+const filteredHexiumModCount = computed(() => filteredHexiumMods.value.length);
 
 function runFilter() {
     let result = sortedMods.value as ThunderstoreMod[];
@@ -172,6 +177,10 @@ export function useModFiltersComposable() {
         searchFilter,
         filteredMods,
         filteredModCount,
+        filteredThunderstoreMods,
+        filteredHexiumMods,
+        filteredThunderstoreModCount,
+        filteredHexiumModCount,
         selectCategoryToCompareOne,
         selectCategoryToCompareAll,
         selectCategoryToExclude,

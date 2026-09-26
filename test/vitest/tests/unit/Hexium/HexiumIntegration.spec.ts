@@ -106,4 +106,39 @@ describe('Hexium Integration Unit Tests', () => {
             expect(updates[0]!.getPackageSource()).toBe('thunderstore');
         });
     });
+
+    describe('Hexium Route and Filtering', () => {
+        it('should have manager.hexium route configured', async () => {
+            const routesModule = await import('../../../../../src/router/routes');
+            const routes = routesModule.default;
+            const layoutRoute = routes.find(r => r.children?.some(c => c.name === 'manager'));
+            expect(layoutRoute).toBeDefined();
+            const managerRoute = layoutRoute?.children?.find(c => c.name === 'manager');
+            expect(managerRoute).toBeDefined();
+            const hexiumRoute = managerRoute?.children?.find(c => c.name === 'manager.hexium');
+            expect(hexiumRoute).toBeDefined();
+            expect(hexiumRoute?.path).toBe('hexium/');
+        });
+
+        it('should filter Thunderstore vs Hexium mods separately', () => {
+            const tsMod = new ThunderstoreMod();
+            tsMod.setName('TS Mod');
+            tsMod.setPackageSource('thunderstore');
+
+            const hexiumMod = new ThunderstoreMod();
+            hexiumMod.setName('Hexium Mod');
+            hexiumMod.setPackageSource('hexium');
+
+            const allMods = [tsMod, hexiumMod];
+
+            const filteredTs = allMods.filter(m => !m.isHexiumSource());
+            const filteredHexium = allMods.filter(m => m.isHexiumSource());
+
+            expect(filteredTs.length).toBe(1);
+            expect(filteredTs[0]?.getName()).toBe('TS Mod');
+
+            expect(filteredHexium.length).toBe(1);
+            expect(filteredHexium[0]?.getName()).toBe('Hexium Mod');
+        });
+    });
 });
